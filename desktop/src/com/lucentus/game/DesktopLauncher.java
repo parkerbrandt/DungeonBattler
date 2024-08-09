@@ -8,8 +8,10 @@ import com.lucentus.game.DungeonBattlerGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
 		config.setTitle("DungeonBattler");
+		config.setWindowedMode(800, 480);
+		config.useVsync(true);
+		config.setForegroundFPS(60);
 		new Lwjgl3Application(new DungeonBattlerGame(), config);
 	}
 }
