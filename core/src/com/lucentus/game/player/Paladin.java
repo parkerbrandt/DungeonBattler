@@ -3,7 +3,6 @@ package com.lucentus.game.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.lucentus.game.DungeonBattlerGame;
@@ -82,6 +81,13 @@ public class Paladin extends Player {
     }
 
     // Override Methods
+
+    /**
+     * Determine which frame of animation the player character will be on
+     * Currently can display either running (WASD) or attacking (Left Click)
+     * @param time the current statetime of the game to determine which frame
+     * @return the frame of animation that will be displayed
+     */
     @Override
     public TextureRegion getCurrentFrame(float time) {
         if (Gdx.input.isTouched())
@@ -91,7 +97,6 @@ public class Paladin extends Player {
 
     /*
      * Allow the player to move
-     * TODO: Update rectangle x and y instead of
      */
 
     @Override
