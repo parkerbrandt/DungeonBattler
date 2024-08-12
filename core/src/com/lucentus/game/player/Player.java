@@ -1,9 +1,16 @@
 package com.lucentus.game.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 
 /**
  * Abstract class used to define common functionality across all playable characters
@@ -37,6 +44,39 @@ public abstract class Player {
     // Constructor
     public Player() {
 
+    }
+
+    // Methods
+    protected void readStatsFromFile(String filename) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(Gdx.files.internal(filename))));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+
+                switch(data[0]) {
+                    case "hit_points":
+                        this.maxHitPoints = Integer.parseInt(data[1]);
+                        this.currentHitPoints = this.maxHitPoints;
+                        break;
+
+                    case "atk_damage":
+                        this.atkDamage = Integer.parseInt(data[1]);
+                        break;
+
+                    case "move_speed":
+                        this.moveSpeed = Integer.parseInt(data[1]);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            reader.close();
+
+        } catch(IOException e) {
+            System.out.printf("Error reading %s stat file.", filename);
+        }
     }
 
 

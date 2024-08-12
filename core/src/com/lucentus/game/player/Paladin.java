@@ -7,10 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.lucentus.game.DungeonBattlerGame;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 /**
  * The Paladin Player Class
  * A Tank class that specializes in defending other party members
@@ -92,13 +88,10 @@ public class Paladin extends Player {
         // Initialize variables
         this.hitbox = new Rectangle(0, 0, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
 
-        // Read the stat data from the stat file
         this.moveSpeed = 200;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(Gdx.files.internal("stats/paladin.json"))));
-        } catch(IOException e) {
-            System.out.println("Error reading Paladin stat file.");
-        }
+
+        // Load all stats from designated file
+        readStatsFromFile("stats/paladin.csv");
     }
 
     // Override Methods
