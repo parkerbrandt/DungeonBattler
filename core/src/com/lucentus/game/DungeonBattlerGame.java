@@ -8,12 +8,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.lucentus.game.enemy.Enemy;
+import com.lucentus.game.player.Paladin;
+import com.lucentus.game.player.Player;
 
 import java.util.Iterator;
 
@@ -22,19 +26,20 @@ import java.util.Iterator;
  */
 public class DungeonBattlerGame extends ApplicationAdapter {
 
+	// Static Class Members
+	public static final int VIEWPORT_HEIGHT = 1080;
+	public static final int VIEWPORT_WIDTH = 1920;
+
 	// Variables
+	private float stateTime;
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 
-	private Rectangle bucket;
-	private Array<Rectangle> raindrops;
+	private Music defaultMusic;
 
-	private long lastDropTime;
-
-	private Texture dropImage;
-	private Texture bucketImage;
-	private Sound dropSound;
-	private Music rainMusic;
+	// Entities
+	private Player player;
+	private Array<Enemy> enemies;
 	
 	@Override
 	public void create () {
@@ -42,34 +47,23 @@ public class DungeonBattlerGame extends ApplicationAdapter {
 		// Create the camera
 		// Used to ensure that we will always be rendering the target resolution regardless of screen
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
 		// Create the spritebatch
 		// Used to draw the loaded sprites
 		batch = new SpriteBatch();
 
-		// Load images/sprites for the game (64x64 pixels)
-		dropImage = new Texture(Gdx.files.internal("drop.png"));
-		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+		// Load the player data / class
+		this.player = new Paladin();
 
 		// Load the sound effects and background music
-		dropSound = Gdx.audio.newSound(Gdx.files.internal("waterdrop.wav"));
-		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rainsounds.mp3"));
+		// defaultMusic = Gdx.audio.newMusic(Gdx.files.internal("field_music_01.wav"));
 
 		// Start playback of background music immediately
-		rainMusic.setLooping(true);
-		rainMusic.play();
+		// defaultMusic.setLooping(true);
+		// defaultMusic.play();
 
-		// Create the Rectangles for the bucket and raindrops
-		bucket = new Rectangle();
-		bucket.x = 800 / 2 - 64 / 2;
-		bucket.y = 20;
-		bucket.width = 64;
-		bucket.height = 64;
-
-		// Create raindrops and spawn the first one
-		raindrops = new Array<Rectangle>();
-		spawnRaindrop();
+		stateTime = 0f;
 	}
 
 	@Override
@@ -77,77 +71,44 @@ public class DungeonBattlerGame extends ApplicationAdapter {
 		// Clear the screen with a dark blue color
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 
+		// Increment the state time
+		stateTime += Gdx.graphics.getDeltaTime();
+
 		// Update the camera
 		camera.update();
 
-		// Render the bucket
+		// Get current animation frames
+		TextureRegion currentPlayerFrame = player.getCurrentFrame(stateTime);
+
+		// Render the player
 		batch.setProjectionMatrix(camera.combined);		// Use the coordinate system specified by camera
 		batch.begin();
-		batch.draw(bucketImage, bucket.x, bucket.y);
-		for (Rectangle raindrop : raindrops)
-			batch.draw(dropImage, raindrop.x, raindrop.y);
+		batch.draw(currentPlayerFrame, player.getX(), player.getY());
 		batch.end();
 
-		// Detect input
-		// User can control the bucket with touch
-		if (Gdx.input.isTouched()) {
-			// Bucket will center around where the user touches
-			Vector3 touchPos = new Vector3();
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos);
-			bucket.x = touchPos.x - 64/3;
-		}
 
-		// User can control the bucket with left and right buttons as well
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-			bucket.x -= 200 * Gdx.graphics.getDeltaTime();
+		/*
+		 * Detect input
+		 */
 
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-			bucket.x += 200 * Gdx.graphics.getDeltaTime();
+		// User can control the player with WASD and arrow keys
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
+			player.moveUp();
 
-		// Check bucket bounds
-		if (bucket.x < 0)
-			bucket.x = 0;
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))
+			player.moveDown();
 
-		if (bucket.x > 800 - 64)
-			bucket.x = 800 - 64;
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
+			player.moveLeft();
 
-		// Check how long it has been since the last raindrop and spawn a new one if necessary
-		if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
-			spawnRaindrop();
-
-		// Make the raindrops move/fall
-		for (Iterator<Rectangle> iter = raindrops.iterator(); iter.hasNext();) {
-			Rectangle raindrop = iter.next();
-			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (raindrop.y + 64 < 0)
-				iter.remove();
-
-			// Check for any raindrops hitting the bucket
-			// Then, play sound and remove raindrop
-			if (raindrop.overlaps(bucket)) {
-				dropSound.play();
-				iter.remove();
-			}
-		}
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
+			player.moveRight();
 	}
-	
+
+
 	@Override
 	public void dispose () {
-		dropImage.dispose();
-		bucketImage.dispose();
-		dropSound.dispose();
-		rainMusic.dispose();
+		defaultMusic.dispose();
 		batch.dispose();
-	}
-
-	private void spawnRaindrop() {
-		Rectangle raindrop = new Rectangle();
-		raindrop.x = MathUtils.random(0, 800 - 64);
-		raindrop.y = 480;
-		raindrop.width = 64;
-		raindrop.height = 64;
-		raindrops.add(raindrop);
-		lastDropTime = TimeUtils.nanoTime();
 	}
 }
