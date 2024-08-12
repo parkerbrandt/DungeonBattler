@@ -23,6 +23,10 @@ public class Paladin extends Player {
     public static final int RUN_FRAME_COLS = 6;
     public static final int RUN_FRAME_ROWS = 1;
 
+    public static final String ATK_SHEET = "paladin/Animations/Attack_1.png";
+    public static final int ATK_FRAME_COLS = 4;
+    public static final int ATK_FRAME_ROWS = 1;
+
     // Properties
 
 
@@ -49,6 +53,22 @@ public class Paladin extends Player {
 
         this.runningAnimation = new Animation<>((float) (Paladin.RUN_FRAME_COLS * Paladin.RUN_FRAME_ROWS) / 60, runFrames);
 
+        // Load the attack animation
+        this.atkSheet = new Texture(Gdx.files.internal(Paladin.ATK_SHEET));
+        temp = TextureRegion.split(atkSheet,
+                                atkSheet.getWidth() / Paladin.ATK_FRAME_COLS,
+                                atkSheet.getHeight() / Paladin.ATK_FRAME_ROWS);
+        TextureRegion[] atkFrames = new TextureRegion[Paladin.ATK_FRAME_COLS * Paladin.ATK_FRAME_ROWS];
+        index = 0;
+        for (int i = 0; i < Paladin.ATK_FRAME_ROWS; i++) {
+            for (int j = 0; j < Paladin.ATK_FRAME_COLS; j++) {
+                atkFrames[index++] = temp[i][j];
+            }
+        }
+
+        this.attackAnimation = new Animation<>((float) (Paladin.ATK_FRAME_COLS * Paladin.ATK_FRAME_ROWS) / 60, atkFrames);
+
+
         // Initialize variables
         this.hitbox = new Rectangle(0, 0, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
 
@@ -64,6 +84,8 @@ public class Paladin extends Player {
     // Override Methods
     @Override
     public TextureRegion getCurrentFrame(float time) {
+        if (Gdx.input.isTouched())
+            return attackAnimation.getKeyFrame(time, true);
         return runningAnimation.getKeyFrame(time, true);
     }
 

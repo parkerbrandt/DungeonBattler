@@ -20,6 +20,9 @@ public abstract class Player {
     protected Animation<TextureRegion> runningAnimation;
     protected Texture runSheet;
 
+    protected Animation<TextureRegion> attackAnimation;
+    protected Texture atkSheet;
+
     // Stats
     protected int maxHitPoints;
     protected int currentHitPoints;
