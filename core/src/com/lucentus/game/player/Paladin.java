@@ -18,6 +18,10 @@ import java.io.IOException;
 public class Paladin extends Player {
 
     // Static Members
+    public static final String IDLE_SHEET = "paladin/Animations/Idle.png";
+    public static final int IDLE_FRAME_COLS = 5;
+    public static final int IDLE_FRAME_ROWS = 1;
+
     public static final String RUN_SHEET = "paladin/Animations/Run.png";
     public static final int RUN_FRAME_COLS = 6;
     public static final int RUN_FRAME_ROWS = 1;
@@ -27,6 +31,8 @@ public class Paladin extends Player {
     public static final int ATK_FRAME_ROWS = 1;
 
     // Properties
+    private Animation<TextureRegion> currentAnimation;
+    private int lastAtkTime;
 
 
     // Constructor
@@ -37,13 +43,29 @@ public class Paladin extends Player {
     public Paladin() {
         super();
 
+        // Load the idle animation
+        this.idleSheet = new Texture(Gdx.files.internal(Paladin.IDLE_SHEET));
+        TextureRegion[][] temp = TextureRegion.split(idleSheet,
+                                    idleSheet.getWidth() / Paladin.IDLE_FRAME_COLS,
+                                    idleSheet.getHeight() / Paladin.IDLE_FRAME_ROWS);
+        TextureRegion[] idleFrames = new TextureRegion[Paladin.IDLE_FRAME_COLS * Paladin.IDLE_FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < Paladin.IDLE_FRAME_ROWS; i++) {
+            for (int j = 0; j < Paladin.IDLE_FRAME_COLS; j++) {
+                idleFrames[index++] = temp[i][j];
+            }
+        }
+
+        this.idleAnimation = new Animation<>((float) (Paladin.IDLE_FRAME_COLS * Paladin.IDLE_FRAME_ROWS) / 60, idleFrames);
+        this.currentAnimation = idleAnimation;
+
         // Load the running animation
         this.runSheet = new Texture(Gdx.files.internal(Paladin.RUN_SHEET));
-        TextureRegion[][] temp = TextureRegion.split(runSheet,
+        temp = TextureRegion.split(runSheet,
                                         runSheet.getWidth() / Paladin.RUN_FRAME_COLS,
                                         runSheet.getHeight() / Paladin.RUN_FRAME_ROWS);
         TextureRegion[] runFrames = new TextureRegion[Paladin.RUN_FRAME_COLS * Paladin.RUN_FRAME_ROWS];
-        int index = 0;
+        index = 0;
         for (int i = 0; i < Paladin.RUN_FRAME_ROWS; i++) {
             for (int j = 0; j < Paladin.RUN_FRAME_COLS; j++) {
                 runFrames[index++] = temp[i][j];
@@ -67,7 +89,6 @@ public class Paladin extends Player {
 
         this.attackAnimation = new Animation<>((float) (Paladin.ATK_FRAME_COLS * Paladin.ATK_FRAME_ROWS) / 60, atkFrames);
 
-
         // Initialize variables
         this.hitbox = new Rectangle(0, 0, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
 
@@ -90,9 +111,17 @@ public class Paladin extends Player {
      */
     @Override
     public TextureRegion getCurrentFrame(float time) {
-        if (Gdx.input.isTouched())
-            return attackAnimation.getKeyFrame(time, true);
-        return runningAnimation.getKeyFrame(time, true);
+        return currentAnimation.getKeyFrame(time, true);
+    }
+
+    @Override
+    public void attack() {
+        currentAnimation = attackAnimation;
+    }
+
+    @Override
+    public void idle() {
+        currentAnimation = idleAnimation;
     }
 
     /*
@@ -107,6 +136,8 @@ public class Paladin extends Player {
         if (hitbox.y < 0) hitbox.y = 0;
         if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE)
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE;
+
+        currentAnimation = runningAnimation;
     }
 
     @Override
@@ -117,6 +148,8 @@ public class Paladin extends Player {
         if (hitbox.y < 0) hitbox.y = 0;
         if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE)
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE;
+
+        currentAnimation = runningAnimation;
     }
 
     @Override
@@ -127,6 +160,8 @@ public class Paladin extends Player {
         if (hitbox.x < 0) hitbox.x = 0;
         if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE)
             hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE;
+
+        currentAnimation = runningAnimation;
     }
 
     @Override
@@ -137,6 +172,14 @@ public class Paladin extends Player {
         if (hitbox.x < 0) hitbox.x = 0;
         if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE)
             hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE;
+
+        currentAnimation = runningAnimation;
+    }
+
+    @Override
+    public void dispose() {
+        runSheet.dispose();
+        atkSheet.dispose();
     }
 
     // Methods

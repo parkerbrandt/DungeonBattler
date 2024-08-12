@@ -15,8 +15,12 @@ public abstract class Player {
 
     // Properties
     protected Rectangle hitbox;
+    protected int teamNum;
 
     // Animations
+    protected Animation<TextureRegion> idleAnimation;
+    protected Texture idleSheet;
+
     protected Animation<TextureRegion> runningAnimation;
     protected Texture runSheet;
 
@@ -37,18 +41,21 @@ public abstract class Player {
 
 
     // Abstract Methods
-    public void moveUp() {}
+    public abstract void attack();
 
-    public void moveDown() {}
+    public abstract void idle();
 
-    public void moveLeft() {}
+    public abstract void moveUp();
 
-    public void moveRight() {}
+    public abstract void moveDown();
 
-    public TextureRegion getCurrentFrame(float time) {
-        return null;
-    }
+    public abstract void moveLeft();
 
+    public abstract void moveRight();
+
+    public abstract TextureRegion getCurrentFrame(float time);
+
+    public abstract void dispose();
 
     // Getters & Setters
     public float getX() {

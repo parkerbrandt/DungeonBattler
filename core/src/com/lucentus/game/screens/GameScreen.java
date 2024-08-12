@@ -50,6 +50,9 @@ public class GameScreen implements Screen {
         // Load the player data / class
         this.player = new Paladin();
 
+        // Create the initial group of enemies
+
+
         // Load the sound effects and background music
         // defaultMusic = Gdx.audio.newMusic(Gdx.files.internal("field_music_01.wav"));
 
@@ -71,6 +74,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         // Clear the screen with a dark blue color
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
@@ -94,42 +98,40 @@ public class GameScreen implements Screen {
          * Detect input
          */
 
+
         // User can control the player with WASD and arrow keys
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
             player.moveUp();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))
+        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))
             player.moveDown();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
             player.moveLeft();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
             player.moveRight();
-    }
+        else
+            player.idle();
 
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
+        // Check if the player is attacking
+        if (Gdx.input.isTouched())
+            player.attack();
 
     }
 
     @Override
-    public void resume() {
-
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void hide() {
+    public void pause() {}
 
-    }
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
 
     @Override
     public void dispose() {
-
+        player.dispose();
+        defaultMusic.dispose();
     }
 }
