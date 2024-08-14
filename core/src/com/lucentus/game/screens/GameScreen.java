@@ -90,7 +90,15 @@ public class GameScreen implements Screen {
         // Render the player
         game.batch.setProjectionMatrix(camera.combined);		// Use the coordinate system specified by camera
         game.batch.begin();
-        game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
+
+        // Check if the frame needs to be flipped if the player is facing a certain direction
+        if (player.getFacingDir() == Player.Direction.WEST) {
+            // currentPlayerFrame.flip(true, false);
+            game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
+        } else {
+            game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
+        }
+
         game.batch.end();
 
 

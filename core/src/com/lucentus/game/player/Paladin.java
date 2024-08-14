@@ -1,6 +1,7 @@
 package com.lucentus.game.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -86,7 +87,8 @@ public class Paladin extends Player {
         this.attackAnimation = new Animation<>((float) (Paladin.ATK_FRAME_COLS * Paladin.ATK_FRAME_ROWS) / 60, atkFrames);
 
         // Initialize variables
-        this.hitbox = new Rectangle(0, 0, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+        this.playerSize = idleSheet.getWidth() / Paladin.IDLE_FRAME_COLS;
+        this.hitbox = new Rectangle(0, 0, playerSize, playerSize);
 
         this.moveSpeed = 200;
 
@@ -127,9 +129,10 @@ public class Paladin extends Player {
 
         // Check bounds
         if (hitbox.y < 0) hitbox.y = 0;
-        if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE)
-            hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE;
+        if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize)
+            hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
+        this.facingDir = Direction.NORTH;
         currentAnimation = runningAnimation;
     }
 
@@ -139,9 +142,10 @@ public class Paladin extends Player {
 
         // Check bounds
         if (hitbox.y < 0) hitbox.y = 0;
-        if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE)
-            hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - Player.PLAYER_SIZE;
+        if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize)
+            hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
+        this.facingDir = Direction.SOUTH;
         currentAnimation = runningAnimation;
     }
 
@@ -151,9 +155,10 @@ public class Paladin extends Player {
 
         // Check bounds
         if (hitbox.x < 0) hitbox.x = 0;
-        if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE)
-            hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE;
+        if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - playerSize)
+            hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - playerSize;
 
+        this.facingDir = Direction.EAST;
         currentAnimation = runningAnimation;
     }
 
@@ -163,14 +168,17 @@ public class Paladin extends Player {
 
         // Check bounds
         if (hitbox.x < 0) hitbox.x = 0;
-        if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE)
-            hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - Player.PLAYER_SIZE;
+        if (hitbox.x > DungeonBattlerGame.VIEWPORT_WIDTH - playerSize)
+            hitbox.x = DungeonBattlerGame.VIEWPORT_WIDTH - playerSize;
 
+        this.facingDir = Direction.WEST;
         currentAnimation = runningAnimation;
+
     }
 
     @Override
     public void dispose() {
+        idleSheet.dispose();
         runSheet.dispose();
         atkSheet.dispose();
     }

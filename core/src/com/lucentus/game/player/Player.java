@@ -17,12 +17,20 @@ import java.io.IOException;
  */
 public abstract class Player {
 
-    // Static Members
-    public static final int PLAYER_SIZE = 64;
+    public enum Direction {
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
+    };
 
     // Properties
+    protected int playerSize;
+    protected float scale = 1.0f;
+
     protected Rectangle hitbox;
     protected int teamNum;
+    protected Direction facingDir = Direction.NORTH;
 
     // Animations
     protected Animation<TextureRegion> idleAnimation;
@@ -98,11 +106,19 @@ public abstract class Player {
     public abstract void dispose();
 
     // Getters & Setters
+    public int getPlayerSize() {
+        return (int)scale * playerSize;
+    }
+
     public float getX() {
         return hitbox.x;
     }
 
     public float getY() {
         return hitbox.y;
+    }
+
+    public Direction getFacingDir() {
+        return facingDir;
     }
 }
