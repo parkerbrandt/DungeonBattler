@@ -30,7 +30,7 @@ public abstract class Player {
 
     protected Rectangle hitbox;
     protected int teamNum;
-    protected Direction facingDir = Direction.NORTH;
+    protected Direction facingDir = Direction.EAST;
 
     // Animations
     protected Animation<TextureRegion> idleAnimation;

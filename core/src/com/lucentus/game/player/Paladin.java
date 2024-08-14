@@ -132,7 +132,6 @@ public class Paladin extends Player {
         if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize)
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
-        this.facingDir = Direction.NORTH;
         currentAnimation = runningAnimation;
     }
 
@@ -145,7 +144,6 @@ public class Paladin extends Player {
         if (hitbox.y > DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize)
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
-        this.facingDir = Direction.SOUTH;
         currentAnimation = runningAnimation;
     }
 

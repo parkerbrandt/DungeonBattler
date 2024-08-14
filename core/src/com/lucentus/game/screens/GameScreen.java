@@ -92,13 +92,11 @@ public class GameScreen implements Screen {
         game.batch.begin();
 
         // Check if the frame needs to be flipped if the player is facing a certain direction
-        if (player.getFacingDir() == Player.Direction.WEST) {
-            // currentPlayerFrame.flip(true, false);
-            game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
-        } else {
-            game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
-        }
+        // SOURCE: https://stackoverflow.com/questions/28000623/libgdx-flip-2d-sprite-animation
+        boolean flip = (player.getFacingDir() == Player.Direction.WEST);
+        game.batch.draw(currentPlayerFrame, flip ? player.getX() + player.getPlayerSize() : player.getX(), player.getY(), flip ? - player.getPlayerSize() : player.getPlayerSize(), player.getPlayerSize());
 
+        // game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
         game.batch.end();
 
 
