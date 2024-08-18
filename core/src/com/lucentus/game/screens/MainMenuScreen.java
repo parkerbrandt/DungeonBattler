@@ -31,9 +31,7 @@ public class MainMenuScreen implements Screen {
      */
 
     @Override
-    public void show() {
-
-    }
+    public void show() {}
 
     @Override
     public void render(float delta) {
@@ -41,8 +39,8 @@ public class MainMenuScreen implements Screen {
 
         camera.update();
         game.batch.begin();
-        game.font.draw(game.batch, "FIGHT THE HORDES", 100, 150);
-        game.font.draw(game.batch, "Touch Anywhere to Begin", 100, 100);
+        game.font.draw(game.batch, "DUNGEON BATTLER", 100, DungeonBattlerGame.VIEWPORT_HEIGHT - 200);
+        game.font.draw(game.batch, "Touch Anywhere to Begin", 100, DungeonBattlerGame.VIEWPORT_HEIGHT - 300);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -52,27 +50,17 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() {}
 }

@@ -3,6 +3,7 @@ package com.lucentus.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.lucentus.game.screens.MainMenuScreen;
 
 import java.util.Iterator;
@@ -17,11 +18,13 @@ public class DungeonBattlerGame extends Game {
 	public static final int VIEWPORT_WIDTH = 1920;
 
 	// Variables
+	public ShapeRenderer shape;
 	public SpriteBatch batch;
 	public BitmapFont font;
 	
 	@Override
 	public void create () {
+		shape = new ShapeRenderer();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 

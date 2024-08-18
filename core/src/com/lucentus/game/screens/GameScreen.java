@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.lucentus.game.DungeonBattlerGame;
@@ -23,12 +25,12 @@ public class GameScreen implements Screen {
 
     private float stateTime;
     private OrthographicCamera camera;
-
     private Music defaultMusic;
 
     // Entities
     private Player player;
     private Array<Enemy> enemies;
+
 
     // Game Variables
     private boolean displayHitboxes = false;
@@ -51,7 +53,7 @@ public class GameScreen implements Screen {
         this.player = new Paladin();
 
         // Create the initial group of enemies
-
+        this.enemies = new Array<>();
 
         // Load the sound effects and background music
         // defaultMusic = Gdx.audio.newMusic(Gdx.files.internal("field_music_01.wav"));
@@ -76,7 +78,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
 
         // Clear the screen with a dark blue color
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        ScreenUtils.clear(0, 0.2f, 0, 1);
 
         // Increment the state time
         stateTime += Gdx.graphics.getDeltaTime();
@@ -91,19 +93,37 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);		// Use the coordinate system specified by camera
         game.batch.begin();
 
+        // Check if hitboxes are being drawn
+        if (displayHitboxes) {
+            // Draw the player's hitbox
+            game.shape.setProjectionMatrix(camera.combined);
+            game.shape.begin(ShapeRenderer.ShapeType.Line);
+            game.shape.setColor(Color.RED);
+            game.shape.rect(player.getX(), player.getY(), player.getHitbox().getWidth(), player.getHitbox().getHeight());
+            game.shape.end();
+
+            // TODO: Draw all enemy hitboxes
+            for (Enemy enemy : enemies) {
+                game.shape.setProjectionMatrix(camera.combined);
+                game.shape.begin(ShapeRenderer.ShapeType.Line);
+                game.shape.setColor(Color.RED);
+
+                game.shape.end();
+            }
+        }
+
         // Check if the frame needs to be flipped if the player is facing a certain direction
         // SOURCE: https://stackoverflow.com/questions/28000623/libgdx-flip-2d-sprite-animation
         boolean flip = (player.getFacingDir() == Player.Direction.WEST);
         game.batch.draw(currentPlayerFrame, flip ? player.getX() + player.getPlayerSize() : player.getX(), player.getY(), flip ? - player.getPlayerSize() : player.getPlayerSize(), player.getPlayerSize());
-
         // game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
+
         game.batch.end();
 
 
         /*
          * Detect input
          */
-
 
         // User can control the player with WASD and arrow keys
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
@@ -119,8 +139,13 @@ public class GameScreen implements Screen {
 
         // Check if the player is attacking
         if (Gdx.input.isTouched())
-            player.attack();
+            player.onAttack(enemies);
 
+
+        // Check buttons used for changing settings
+        // Switch displaying hitboxes if X is pressed
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X))
+            displayHitboxes = !displayHitboxes;
     }
 
     @Override
