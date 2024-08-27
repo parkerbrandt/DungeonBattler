@@ -1,10 +1,15 @@
 package com.lucentus.game.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
+import com.lucentus.game.DungeonBattlerGame;
+import com.lucentus.game.enemy.Enemy;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -48,6 +53,9 @@ public abstract class Player {
     protected int atkDamage;
     protected int moveSpeed;
 
+    // Attacks and Abilities
+    protected float lastAttackTime = 0f;
+
 
     // Constructor
     public Player() {
@@ -55,43 +63,42 @@ public abstract class Player {
     }
 
     // Methods
-    protected void readStatsFromFile(String filename) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(Gdx.files.internal(filename))));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
+    protected void readStatsFromFile(String filename) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(Gdx.files.internal(filename))));
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
 
-                switch(data[0]) {
-                    case "hit_points":
-                        this.maxHitPoints = Integer.parseInt(data[1]);
-                        this.currentHitPoints = this.maxHitPoints;
-                        break;
+            switch(data[0]) {
+                case "hit_points":
+                    this.maxHitPoints = Integer.parseInt(data[1]);
+                    this.currentHitPoints = this.maxHitPoints;
+                    break;
 
-                    case "atk_damage":
-                        this.atkDamage = Integer.parseInt(data[1]);
-                        break;
+                case "atk_damage":
+                    this.atkDamage = Integer.parseInt(data[1]);
+                    break;
 
-                    case "move_speed":
-                        this.moveSpeed = Integer.parseInt(data[1]);
-                        break;
+                case "move_speed":
+                    this.moveSpeed = Integer.parseInt(data[1]);
+                    break;
 
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
-            reader.close();
-
-        } catch(IOException e) {
-            System.out.printf("Error reading %s stat file.", filename);
         }
+        reader.close();
     }
 
 
     // Abstract Methods
-    public abstract void attack();
+    public abstract void draw(final DungeonBattlerGame game, OrthographicCamera camera, float time);
 
     public abstract void idle();
+
+    public abstract void onAttack(Array<Enemy> enemies);
+
+    public abstract void onHit(Enemy enemy);
 
     public abstract void moveUp();
 
@@ -108,6 +115,10 @@ public abstract class Player {
     // Getters & Setters
     public int getPlayerSize() {
         return (int)scale * playerSize;
+    }
+
+    public Rectangle getHitbox() {
+        return hitbox;
     }
 
     public float getX() {

@@ -2,11 +2,19 @@ package com.lucentus.game.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.lucentus.game.DungeonBattlerGame;
+import com.lucentus.game.enemy.Enemy;
+
+import java.io.IOException;
 
 /**
  * The Paladin Player Class
@@ -15,6 +23,8 @@ import com.lucentus.game.DungeonBattlerGame;
 public class Paladin extends Player {
 
     // Static Members
+    public static final String STAT_FILENAME = "stats/paladin.csv";
+
     public static final String IDLE_SHEET = "paladin/Animations/Idle.png";
     public static final int IDLE_FRAME_COLS = 5;
     public static final int IDLE_FRAME_ROWS = 1;
@@ -29,6 +39,7 @@ public class Paladin extends Player {
 
     // Properties
     private Animation<TextureRegion> currentAnimation;
+    private String currentAnimationName = "idle";
     private int lastAtkTime;
 
 
@@ -90,13 +101,41 @@ public class Paladin extends Player {
         this.playerSize = idleSheet.getWidth() / Paladin.IDLE_FRAME_COLS;
         this.hitbox = new Rectangle(0, 0, playerSize, playerSize);
 
-        this.moveSpeed = 200;
-
         // Load all stats from designated file
-        readStatsFromFile("stats/paladin.csv");
+        try {
+            readStatsFromFile(Paladin.STAT_FILENAME);
+        } catch (IOException e) {
+            System.out.println("Exception occurred while reading " + Paladin.STAT_FILENAME);
+
+            // Set default stats
+            this.maxHitPoints = 300;
+            this.currentHitPoints = 300;
+            this.atkDamage = 15;
+            this.moveSpeed = 200;
+        }
     }
 
     // Override Methods
+    @Override
+    public void draw(final DungeonBattlerGame game, OrthographicCamera camera, float time) {
+        game.batch.begin();
+
+        // Check if the frame needs to be flipped if the player is facing a certain direction
+        // SOURCE: https://stackoverflow.com/questions/28000623/libgdx-flip-2d-sprite-animation
+        boolean flip = (this.getFacingDir() == Player.Direction.WEST);
+        game.batch.draw(this.getCurrentFrame(time), flip ? this.getX() + this.getPlayerSize() : this.getX(), this.getY(), flip ? - this.getPlayerSize() : this.getPlayerSize(), this.getPlayerSize());
+        game.batch.end();
+
+        // If we are attacking, then draw the sword as a box in front of where the player is facing
+        if (this.currentAnimationName.equals("attack")) {
+            game.shape.setProjectionMatrix(camera.combined);
+            game.shape.begin(ShapeRenderer.ShapeType.Filled);
+            game.shape.setColor(Color.WHITE);
+            float weaponX = this.facingDir == Direction.EAST ? getX() + 70 : getX() - 70;
+            game.shape.rect(weaponX, getY(), getHitbox().getWidth() / 2, getHitbox().getHeight());
+            game.shape.end();
+        }
+    }
 
     /**
      * Determine which frame of animation the player character will be on
@@ -110,13 +149,26 @@ public class Paladin extends Player {
     }
 
     @Override
-    public void attack() {
-        currentAnimation = attackAnimation;
+    public void idle() {
+        currentAnimation = idleAnimation;
+        currentAnimationName = "idle";
     }
 
     @Override
-    public void idle() {
-        currentAnimation = idleAnimation;
+    public void onAttack(Array<Enemy> enemies) {
+        // TODO: Need to check for last time we attacked
+
+        currentAnimation = attackAnimation;
+        currentAnimationName = "attack";
+
+        // TODO: Swing sword and check if collides with any enemies
+        // Sword will swing hit in box in front of player
+        // Sword will only exist while attacking
+    }
+
+    @Override
+    public void onHit(Enemy enemy) {
+        // TODO: Reduce HP by an amount
     }
 
     /*
@@ -133,6 +185,7 @@ public class Paladin extends Player {
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
         currentAnimation = runningAnimation;
+        currentAnimationName = "run";
     }
 
     @Override
@@ -145,6 +198,7 @@ public class Paladin extends Player {
             hitbox.y = DungeonBattlerGame.VIEWPORT_HEIGHT - playerSize;
 
         currentAnimation = runningAnimation;
+        currentAnimationName = "run";
     }
 
     @Override
@@ -158,6 +212,7 @@ public class Paladin extends Player {
 
         this.facingDir = Direction.EAST;
         currentAnimation = runningAnimation;
+        currentAnimationName = "run";
     }
 
     @Override
@@ -171,6 +226,7 @@ public class Paladin extends Player {
 
         this.facingDir = Direction.WEST;
         currentAnimation = runningAnimation;
+        currentAnimationName = "run";
 
     }
 

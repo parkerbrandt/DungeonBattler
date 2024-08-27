@@ -86,9 +86,6 @@ public class GameScreen implements Screen {
         // Update the camera
         camera.update();
 
-        // Get current animation frames
-        TextureRegion currentPlayerFrame = player.getCurrentFrame(stateTime);
-
         // Render the player
         game.batch.setProjectionMatrix(camera.combined);		// Use the coordinate system specified by camera
         game.batch.begin();
@@ -111,14 +108,12 @@ public class GameScreen implements Screen {
                 game.shape.end();
             }
         }
-
-        // Check if the frame needs to be flipped if the player is facing a certain direction
-        // SOURCE: https://stackoverflow.com/questions/28000623/libgdx-flip-2d-sprite-animation
-        boolean flip = (player.getFacingDir() == Player.Direction.WEST);
-        game.batch.draw(currentPlayerFrame, flip ? player.getX() + player.getPlayerSize() : player.getX(), player.getY(), flip ? - player.getPlayerSize() : player.getPlayerSize(), player.getPlayerSize());
-        // game.batch.draw(currentPlayerFrame, player.getX(), player.getY());
-
         game.batch.end();
+
+        // Draw the player and necessary animations
+        player.draw(game, camera, stateTime);
+
+        // TODO: Draw each of the enemies
 
 
         /*
