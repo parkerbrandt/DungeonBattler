@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.lucentus.dungeon.screens.BattleScreen;
+import com.lucentus.dungeon.screens.HomeScreen;
 import com.lucentus.dungeon.screens.StartScreen;
 
 public class DungeonBattler extends Game {
@@ -38,7 +40,7 @@ public class DungeonBattler extends Game {
 		font = new BitmapFont();
 
 		// Set to title screen
-		this.setScreen(new StartScreen(this));
+		this.setScreen(new BattleScreen(this));
 	}
 
 	@Override
