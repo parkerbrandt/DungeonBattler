@@ -1,6 +1,7 @@
 package com.lucentus.dungeon.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -45,6 +46,61 @@ public class BattleScreen implements Screen {
         camera.setToOrtho(false, DungeonBattler.VIEWPORT_WIDTH, DungeonBattler.VIEWPORT_HEIGHT);
     }
 
+    /*
+     * Methods
+     */
+    private void input() {
+
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        float playerX = player.getCharacter().getPosX();
+        float playerY = player.getCharacter().getPosY();
+
+        float moveSpeed = player.getCharacter().getMoveSpeed();
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+            player.getCharacter().setPosX(playerY + (moveSpeed * deltaTime));
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+            player.getCharacter().setPosY(playerY - (moveSpeed * deltaTime));
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            player.getCharacter().setPosX(playerX + (moveSpeed * deltaTime));
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            player.getCharacter().setPosX(playerX - (moveSpeed * deltaTime));
+        }
+
+        // TODO: Check bounds
+    }
+
+    private void logic() {
+
+    }
+
+    private void draw() {
+        // Update camera
+        camera.update();
+
+        // Render the player's character as a rectangle
+        player.getCharacter().render(game, Color.GREEN);
+        if (showHitboxes)
+            player.getCharacter().renderHitbox(game, Color.WHITE);
+
+        for (NPCEnemy enemy : enemies) {
+            enemy.render(game, Color.GRAY);
+            if (showHitboxes)
+                enemy.renderHitbox(game, Color.RED);
+        }
+    }
+
+    private void drawUI() {
+        // TODO: Render any UI elements
+    }
+
 
     /*
      * Overridden Methods
@@ -61,21 +117,10 @@ public class BattleScreen implements Screen {
         // Increment State Time
         stateTime += Gdx.graphics.getDeltaTime();
 
-        // Update camera
-        camera.update();
-
-        // TODO: Render any UI elements
-
-        // Render the player's character as a rectangle
-        player.getCharacter().render(game, Color.GREEN);
-        if (showHitboxes)
-            player.getCharacter().renderHitbox(game, Color.WHITE);
-
-        for (NPCEnemy enemy : enemies) {
-            enemy.render(game, Color.GRAY);
-            if (showHitboxes)
-                enemy.renderHitbox(game, Color.RED);
-        }
+        input();
+        logic();
+        draw();
+        drawUI();
     }
 
     @Override

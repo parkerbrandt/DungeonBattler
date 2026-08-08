@@ -4,7 +4,7 @@ package com.lucentus.dungeon.entities;
 /**
  * Non-playable Character Enemies
  */
-public class NPCEnemy extends Entity {
+public class NPCEnemy extends MovingEntity {
 
     /*
      * Properties

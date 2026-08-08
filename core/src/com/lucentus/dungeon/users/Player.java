@@ -1,6 +1,7 @@
 package com.lucentus.dungeon.users;
 
 import com.lucentus.dungeon.entities.Entity;
+import com.lucentus.dungeon.entities.Warrior;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class Player {
     private final String name;
     private final String userId;
 
-    private ArrayList<Entity> characters;
+    private ArrayList<Warrior> characters;
     private int activeChar;
 
 
@@ -67,7 +68,7 @@ public class Player {
         return userId;
     }
 
-    public Entity getCharacter() {
+    public Warrior getCharacter() {
         return characters.get(activeChar);
     }
 }

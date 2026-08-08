@@ -1,6 +1,12 @@
 package com.lucentus.dungeon.entities;
 
-public class Warrior extends Entity {
+public class Warrior extends MovingEntity {
+
+    /*
+     * Properties
+     */
+
+
 
     /*
      * Constructors
