@@ -5,7 +5,7 @@ public class MovingEntity extends Entity {
     /*
      * Properties
      */
-    protected float moveSpeed;
+    protected float moveSpeed = 50.0f;
 
 
     /*

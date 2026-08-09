@@ -33,6 +33,9 @@ public class Player {
         // TODO: Create a username and ID
         this.name = "";
         this.userId = "000000";
+
+        this.characters = new ArrayList<>();
+        this.characters.add(new Warrior());
     }
 
     /**

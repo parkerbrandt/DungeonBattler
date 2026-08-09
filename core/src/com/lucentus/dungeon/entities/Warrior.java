@@ -13,6 +13,9 @@ public class Warrior extends MovingEntity {
      */
     public Warrior() {
         super();
+
+        this.width = 5.0f;
+        this.height = 5.0f;
     }
 
 

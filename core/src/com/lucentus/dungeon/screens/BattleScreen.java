@@ -5,8 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.lucentus.dungeon.DungeonBattler;
 import com.lucentus.dungeon.entities.NPCEnemy;
 import com.lucentus.dungeon.users.Player;
@@ -27,6 +30,9 @@ public class BattleScreen implements Screen {
     private final OrthographicCamera camera;
     private float stateTime;
 
+    SpriteBatch spriteBatch;
+    FitViewport viewport;
+
     private Player player;
     private ArrayList<NPCEnemy> enemies = new ArrayList<>();
 
@@ -40,7 +46,12 @@ public class BattleScreen implements Screen {
     public BattleScreen(DungeonBattler game) {
         this.game = game;
 
+        spriteBatch = new SpriteBatch();
+        viewport = new FitViewport(8, 5);
+
         player = new Player();
+        player.getCharacter().setPosX((float) DungeonBattler.VIEWPORT_WIDTH / 2);
+        player.getCharacter().setPosY((float) DungeonBattler.VIEWPORT_HEIGHT / 2);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, DungeonBattler.VIEWPORT_WIDTH, DungeonBattler.VIEWPORT_HEIGHT);
@@ -59,25 +70,25 @@ public class BattleScreen implements Screen {
         float moveSpeed = player.getCharacter().getMoveSpeed();
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.getCharacter().setPosX(playerY + (moveSpeed * deltaTime));
+            player.getCharacter().setPosY(playerY + (moveSpeed * deltaTime));
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             player.getCharacter().setPosY(playerY - (moveSpeed * deltaTime));
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             player.getCharacter().setPosX(playerX + (moveSpeed * deltaTime));
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.getCharacter().setPosX(playerX - (moveSpeed * deltaTime));
         }
-
-        // TODO: Check bounds
     }
 
     private void logic() {
+        // Limit player movement inside screen
+        // player.getCharacter().setPosX(MathUtils.clamp(player.getCharacter().getPosX(), 0, ))
 
     }
 
@@ -86,7 +97,7 @@ public class BattleScreen implements Screen {
         camera.update();
 
         // Render the player's character as a rectangle
-        player.getCharacter().render(game, Color.GREEN);
+        player.getCharacter().render(game, Color.WHITE);
         if (showHitboxes)
             player.getCharacter().renderHitbox(game, Color.WHITE);
 
@@ -124,8 +135,8 @@ public class BattleScreen implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
-
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
     }
 
     @Override
