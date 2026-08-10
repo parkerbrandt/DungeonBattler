@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.lucentus.dungeon.DungeonBattler;
+import com.lucentus.dungeon.entities.skills.Skill;
+
+import java.util.ArrayList;
 
 
 /**
@@ -32,6 +35,8 @@ public abstract class Entity {
     protected boolean isCollidable = true;
 
     protected TEAM team = TEAM.NEUTRAL;
+
+    protected ArrayList<Skill> skills;
 
 
     /*

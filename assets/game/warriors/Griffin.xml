@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Warrior>
+    <Description />
+    <Stats>
+        <AttackPwr Base="10.0"/>
+        <MagicPwr Base="0.0"/>
+        <MoveSpd Base="50.0"/>
+    </Stats>
+    <Abilities>
+        <Ability Order="1" Type="Attack">
+        </Ability>
+        <Ability Order="2" Type="Attack">
+
+        </Ability>
+        <Ability Order="3" Type="Support">
+
+        </Ability>>
+        <Ability Order="4" Type="Attack">
+
+        </Ability>
+    </Abilities>
+</Warrior>
